@@ -1,12 +1,14 @@
 # DiscordRAT
 > You want pen. testing a RAT, but you don't have a server to host in on? No problem! This RAT uses discord as its terminal, you can access it with your PC, phone or even your smart watch!
 >
+> __**THIS RAT IS STILL IN EARLY DEVELOPMENT**__, its working, but there are not a lot of features to it yet...
 > This tool was created for penetration testing purposes only.
 ### 🔥 Simple DEMO
 Information Gathering                                                        |  FTP+ Shell
 :---------------------------------------------------------------------------:|:-------------------------------------------------------------:
 <img src="screenshots/ipInfo.png" alt="Information Gathering" width="300"/>  |  <img src="screenshots/ftp.png" alt="FTP+ Shell" width="500"/>
 ### ⚙️ Installation
+> __**THIS RAT IS STILL IN EARLY DEVELOPMENT**__, its working, but there are not a lot of features to it yet...
 First you have to install the **required dependencies**, you can do so by running `pip install -r requirements.txt`.
 Next you need to **configure** the RAT.
 If you are on Linux you will have to install Tkinter, you can do so by running `sudo apt-get install python3-tk` or `sudo pacman -S tk`
