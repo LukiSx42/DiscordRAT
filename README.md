@@ -9,6 +9,7 @@ Information Gathering                                                        |  
 <img src="screenshots/ipInfo.png" alt="Information Gathering" width="300"/>  |  <img src="screenshots/ftp.png" alt="FTP+ Shell" width="500"/>
 ### ⚙️ Installation
 > __**THIS RAT IS STILL IN EARLY DEVELOPMENT**__, its working, but there are not a lot of features to it yet...
+
 First you have to install the **required dependencies**, you can do so by running `pip install -r requirements.txt`.
 Next you need to **configure** the RAT.
 If you are on Linux you will have to install Tkinter, you can do so by running `sudo apt-get install python3-tk` or `sudo pacman -S tk`
